@@ -102,7 +102,7 @@
             box.style.top = newY + "px";
 
             // If 100 clicks, remove box and show winner message
-            if (clickCount >= 1) {
+            if (clickCount >= 10) {
                 box.style.display = "none"; // Hide the box
                 document.getElementById("winnerText").style.display = "block"; // Show Winner!
                 document.getElementById("restartButton").style.display = "block"; // Show Restart button
