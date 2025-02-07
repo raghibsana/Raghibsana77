@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Move on Touch</title>
+    <title>Click Game</title>
     <style>
         body {
             margin: 0;
@@ -12,7 +12,9 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f0f0f0;
+            background-color: rgb(100, 100, 255); /* Initial RGB color */
+            position: relative;
+            flex-direction: column;
         }
 
         .movable {
@@ -31,20 +33,89 @@
             cursor: pointer;
             border-radius: 10px;
         }
+
+        .countdown {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: black;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .winner {
+            display: none;
+            font-size: 40px;
+            font-weight: bold;
+            color: green;
+            text-align: center;
+        }
+
+        .restart-btn {
+            display: none;
+            padding: 10px 20px;
+            font-size: 20px;
+            font-weight: bold;
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
 
+    <div class="countdown" id="countdown">Clicks: 0</div>
     <div class="movable" id="movableBox">Touch Me</div>
+    <div class="winner" id="winnerText">🖕🖕replay🖕🖕🤣</div>
+    <button class="restart-btn" id="restartButton">Restart</button>
 
     <script>
+        let clickCount = 0;
+
+        function changeBackground() {
+            let r = Math.floor(Math.random() * 256);
+            let g = Math.floor(Math.random() * 256);
+            let b = Math.floor(Math.random() * 256);
+            document.body.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+        }
+
+        setInterval(changeBackground, 1000); // Background changes every second
+
         document.getElementById("movableBox").addEventListener("click", function() {
             let box = this;
+            
+            // Increase click count
+            clickCount++;
+            document.getElementById("countdown").textContent = "Clicks: " + clickCount;
+
+            // Move to random position
             let newX = Math.random() * (window.innerWidth - box.clientWidth);
             let newY = Math.random() * (window.innerHeight - box.clientHeight);
             
             box.style.left = newX + "px";
             box.style.top = newY + "px";
+
+            // If 100 clicks, remove box and show winner message
+            if (clickCount >= 100) {
+                box.style.display = "none"; // Hide the box
+                document.getElementById("winnerText").style.display = "block"; // Show Winner!
+                document.getElementById("restartButton").style.display = "block"; // Show Restart button
+            }
+        });
+
+        // Restart Game
+        document.getElementById("restartButton").addEventListener("click", function() {
+            clickCount = 0;
+            document.getElementById("countdown").textContent = "Clicks: 0";
+            document.getElementById("movableBox").style.display = "flex"; // Show the box again
+            document.getElementById("winnerText").style.display = "none"; // Hide Winner text
+            document.getElementById("restartButton").style.display = "none"; // Hide Restart button
         });
     </script>
 
