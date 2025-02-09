@@ -3,143 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Click Game</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: rgb(100, 100, 255); /* Initial RGB color */
-            position: relative;
-            flex-direction: column;
-        }
-
-        .movable {
-            width: 100px;
-            height: 100px;
-            background-color: red;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 10px;
-        }
-
-        .countdown {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background-color: black;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .winner {
-            display: none;
-            font-size: 40px;
-            font-weight: bold;
-            color: green;
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-Time Chat</title>
+    <title>Snapchat-Style Camera with Firebase Chat</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .chat-container {
-            width: 350px;
-            height: 500px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        .chat-box {
-            flex: 1;
-            padding: 10px;
-            overflow-y: auto;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            flex-direction: column;
-        }
-        .message {
-            padding: 8px;
-            margin: 5px;
-            border-radius: 5px;
-            max-width: 70%;
-        }
-        .user-message {
-            background: #007bff;
-            color: white;
-            align-self: flex-end;
-            text-align: right;
-        }
-        .other-message {
-            background: #ddd;
-            color: black;
-            align-self: flex-start;
-        }
-        .chat-input {
-            display: flex;
-            padding: 10px;
-            border-top: 1px solid #ddd;
-            background: #fff;
-        }
-        .chat-input input {
-            flex: 1;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            outline: none;
-        }
-        .chat-input button {
-            padding: 8px 15px;
-            border: none;
-            background: #007bff;
-            color: white;
-            cursor: pointer;
-            margin-left: 5px;
-            border-radius: 5px;
-        }
-        .chat-input button:hover {
-            background: #0056b3;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: black; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
+        .camera-container { position: relative; width: 100vw; height: 50vh; display: flex; justify-content: center; align-items: center; }
+        video { width: 100%; height: 100%; object-fit: cover; }
+        canvas { display: none; }
+        .capture-btn { position: absolute; bottom: 10px; width: 70px; height: 70px; background: white; border-radius: 50%; cursor: pointer; }
+        .chat-container { width: 100%; height: 50vh; background: white; display: flex; flex-direction: column; }
+        .chat-box { flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; }
+        .message { padding: 8px; margin: 5px; border-radius: 5px; max-width: 70%; }
+        .user-message { background: #007bff; color: white; align-self: flex-end; text-align: right; }
+        .other-message { background: #ddd; color: black; align-self: flex-start; }
+        .chat-input { display: flex; padding: 10px; border-top: 1px solid #ddd; }
+        .chat-input input { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 5px; outline: none; }
+        .chat-input button { padding: 8px 15px; border: none; background: #007bff; color: white; cursor: pointer; margin-left: 5px; border-radius: 5px; }
+        .captured-image { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; display: none; border-radius: 10px; border: 2px solid white; }
+        .back-btn { position: absolute; top: 20px; left: 20px; background: rgba(0, 0, 0, 0.5); color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; display: none; }
     </style>
 </head>
 <body>
 
+<div class="camera-container">
+    <video id="cameraFeed" autoplay playsinline></video>
+    <canvas id="canvas"></canvas>
+    <img id="capturedImage" class="captured-image" />
+    <button id="captureBtn" class="capture-btn"></button>
+    <button id="backBtn" class="back-btn">Back</button>
+</div>
+
 <div class="chat-container">
-    <div class="chat-box" id="chat-box">
-        <!-- Messages will be displayed here -->
-    </div>
+    <div class="chat-box" id="chat-box"></div>
     <div class="chat-input">
         <input type="text" id="message-input" placeholder="Type a message..." />
         <button onclick="sendMessage()">Send</button>
+        <button onclick="uploadImage()">📷</button>
     </div>
 </div>
 
@@ -147,36 +49,53 @@
     // 🔥 Replace with your Firebase config
     const firebaseConfig = {
         apiKey: "AIzaSyCbxGBL80kGfzR75366JG_2vyxFulmelFA",
-        authDomain: "raghib-36c32.firebaseapp.com",
-        databaseURL: "https://console.firebase.google.com/u/0/project/raghib-36c32/settings/general/web:ZTJkN2EwMDctYjk2Ny00NGI2LWExYTYtMTJiN2Y5ZTc3MGQ4",
-        projectId: "raghib-36c32",
-        storageBucket: "raghib-36c32.firebasestorage.app",
-        messagingSenderId: "755835293001",
-        appId: "1:755835293001:web:3787bdfcf9ec2e3b3b1e98"
+  authDomain: "raghib-36c32.firebaseapp.com",
+  projectId: "raghib-36c32",
+  storageBucket: "raghib-36c32.firebasestorage.app",
+  messagingSenderId: "755835293001",
+  appId: "1:755835293001:web:3787bdfcf9ec2e3b3b1e98",
+  measurementId: "G-0SP00BEEP2"
     };
 
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-
-    const username = prompt("Enter your name:"); // Ask user for their name
+    const storage = firebase.storage();
+    const username = prompt("Enter your name:");
 
     function sendMessage() {
         let input = document.getElementById("message-input");
         let message = input.value.trim();
         if (message === "") return;
 
-        // Send message to Firebase
         db.ref("messages").push({
             user: username,
             text: message,
+            type: "text",
             timestamp: Date.now()
         });
 
         input.value = "";
     }
 
-    // Listen for new messages in Firebase
+    function uploadImage() {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(blob => {
+            let fileRef = storage.ref("images/" + Date.now() + ".png");
+            fileRef.put(blob).then(snapshot => {
+                fileRef.getDownloadURL().then(url => {
+                    db.ref("messages").push({
+                        user: username,
+                        text: url,
+                        type: "image",
+                        timestamp: Date.now()
+                    });
+                });
+            });
+        }, "image/png");
+    }
+
     db.ref("messages").on("child_added", snapshot => {
         let messageData = snapshot.val();
         let chatBox = document.getElementById("chat-box");
@@ -184,11 +103,37 @@
         let messageDiv = document.createElement("div");
         messageDiv.classList.add("message");
         messageDiv.classList.add(messageData.user === username ? "user-message" : "other-message");
-        messageDiv.textContent = messageData.user + ": " + messageData.text;
+
+        if (messageData.type === "text") {
+            messageDiv.textContent = messageData.user + ": " + messageData.text;
+        } else if (messageData.type === "image") {
+            let img = document.createElement("img");
+            img.src = messageData.text;
+            img.style.maxWidth = "200px";
+            img.style.borderRadius = "5px";
+            messageDiv.appendChild(img);
+        }
 
         chatBox.appendChild(messageDiv);
-        chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll
+        chatBox.scrollTop = chatBox.scrollHeight;
     });
+
+    const video = document.getElementById('cameraFeed');
+    const canvas = document.getElementById('canvas');
+    const captureBtn = document.getElementById('captureBtn');
+
+    async function startCamera() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            video.srcObject = stream;
+        } catch (error) {
+            alert("Camera access denied. Please enable camera permissions.");
+            console.error("Error accessing camera:", error);
+        }
+    }
+
+    captureBtn.addEventListener('click', uploadImage);
+    startCamera();
 </script>
 
 </body>
