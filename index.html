@@ -51,73 +51,145 @@
             font-size: 40px;
             font-weight: bold;
             color: green;
-            text-align: center;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Chat</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-
-        .restart-btn {
-            display: none;
-            padding: 10px 20px;
-            font-size: 20px;
-            font-weight: bold;
-            background-color: blue;
-            color: white;
-            border: none;
+        .chat-container {
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-box {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+        }
+        .message {
+            padding: 8px;
+            margin: 5px;
             border-radius: 5px;
+            max-width: 70%;
+        }
+        .user-message {
+            background: #007bff;
+            color: white;
+            align-self: flex-end;
+            text-align: right;
+        }
+        .other-message {
+            background: #ddd;
+            color: black;
+            align-self: flex-start;
+        }
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            background: #fff;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+        .chat-input button {
+            padding: 8px 15px;
+            border: none;
+            background: #007bff;
+            color: white;
             cursor: pointer;
-            margin-top: 20px;
+            margin-left: 5px;
+            border-radius: 5px;
+        }
+        .chat-input button:hover {
+            background: #0056b3;
         }
     </style>
 </head>
 <body>
 
-    <div class="countdown" id="countdown">Clicks: 0</div>
-    <div class="movable" id="movableBox">Touch Me</div>
-    <div class="winner" id="winnerText">🖕🖕replay🖕🖕🤣</div>
-    <button class="restart-btn" id="restartButton">Restart</button>
+<div class="chat-container">
+    <div class="chat-box" id="chat-box">
+        <!-- Messages will be displayed here -->
+    </div>
+    <div class="chat-input">
+        <input type="text" id="message-input" placeholder="Type a message..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
 
-    <script>
-        let clickCount = 0;
+<script>
+    // 🔥 Replace with your Firebase config
+    const firebaseConfig = {
+        apiKey: "AIzaSyCbxGBL80kGfzR75366JG_2vyxFulmelFA",
+        authDomain: "raghib-36c32.firebaseapp.com",
+        databaseURL: "https://console.firebase.google.com/u/0/project/raghib-36c32/settings/general/web:ZTJkN2EwMDctYjk2Ny00NGI2LWExYTYtMTJiN2Y5ZTc3MGQ4",
+        projectId: "raghib-36c32",
+        storageBucket: "raghib-36c32.firebasestorage.app",
+        messagingSenderId: "755835293001",
+        appId: "1:755835293001:web:3787bdfcf9ec2e3b3b1e98"
+    };
 
-        function changeBackground() {
-            let r = Math.floor(Math.random() * 256);
-            let g = Math.floor(Math.random() * 256);
-            let b = Math.floor(Math.random() * 256);
-            document.body.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
-        }
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-        setInterval(changeBackground, 1000); // Background changes every second
+    const username = prompt("Enter your name:"); // Ask user for their name
 
-        document.getElementById("movableBox").addEventListener("click", function() {
-            let box = this;
-            
-            // Increase click count
-            clickCount++;
-            document.getElementById("countdown").textContent = "Clicks: " + clickCount;
+    function sendMessage() {
+        let input = document.getElementById("message-input");
+        let message = input.value.trim();
+        if (message === "") return;
 
-            // Move to random position
-            let newX = Math.random() * (window.innerWidth - box.clientWidth);
-            let newY = Math.random() * (window.innerHeight - box.clientHeight);
-            
-            box.style.left = newX + "px";
-            box.style.top = newY + "px";
-
-            // If 100 clicks, remove box and show winner message
-            if (clickCount >= 10) {
-                box.style.display = "none"; // Hide the box
-                document.getElementById("winnerText").style.display = "block"; // Show Winner!
-                document.getElementById("restartButton").style.display = "block"; // Show Restart button
-            }
+        // Send message to Firebase
+        db.ref("messages").push({
+            user: username,
+            text: message,
+            timestamp: Date.now()
         });
 
-        // Restart Game
-        document.getElementById("restartButton").addEventListener("click", function() {
-            clickCount = 0;
-            document.getElementById("countdown").textContent = "Clicks: 0";
-            document.getElementById("movableBox").style.display = "flex"; // Show the box again
-            document.getElementById("winnerText").style.display = "none"; // Hide Winner text
-            document.getElementById("restartButton").style.display = "none"; // Hide Restart button
-        });
-    </script>
+        input.value = "";
+    }
+
+    // Listen for new messages in Firebase
+    db.ref("messages").on("child_added", snapshot => {
+        let messageData = snapshot.val();
+        let chatBox = document.getElementById("chat-box");
+
+        let messageDiv = document.createElement("div");
+        messageDiv.classList.add("message");
+        messageDiv.classList.add(messageData.user === username ? "user-message" : "other-message");
+        messageDiv.textContent = messageData.user + ": " + messageData.text;
+
+        chatBox.appendChild(messageDiv);
+        chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll
+    });
+</script>
 
 </body>
 </html>
