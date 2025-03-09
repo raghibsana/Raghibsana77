@@ -3,38 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple WebSocket Chat</title>
+    <title>My Webpage</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        #chat { width: 80%; height: 300px; border: 1px solid #000; overflow-y: auto; margin: auto; padding: 10px; }
-        input { width: 75%; padding: 10px; }
-        button { padding: 10px; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+        nav {
+            background-color: #444;
+            overflow: hidden;
+        }
+        nav a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        nav a:hover {
+            background-color: #575757;
+        }
+        section {
+            padding: 20px;
+            margin: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
     </style>
 </head>
 <body>
-    <h2>WebSocket Chat</h2>
-    <div id="chat"></div>
-    <input type="text" id="message" placeholder="Type a message...">
-    <button onclick="sendMessage()">Send</button>
 
-    <script>
-        const socket = new WebSocket("ws://localhost:8765");
-        const chatBox = document.getElementById("chat");
+<header>
+    <h1>Welcome to My Webpage</h1>
+</header>
 
-        socket.addEventListener("message", event => {
-            const msg = document.createElement("p");
-            msg.textContent = event.data;
-            chatBox.appendChild(msg);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        });
+<nav>
+    <a href="#">Home</a>
+    <a href="#">About</a>
+    <a href="#">Services</a>
+    <a href="#">Contact</a>
+</nav>
 
-        function sendMessage() {
-            const input = document.getElementById("message");
-            if (input.value.trim() !== "") {
-                socket.send(input.value);
-                input.value = "";
-            }
-        }
-    </script>
+<section>
+    <h2>About Me</h2>
+    <p>This is a simple webpage created using HTML and CSS. You can modify this code to add more content and features.</p>
+</section>
+
+<footer>
+    <p>&copy; 2025 My Webpage. All rights reserved.</p>
+</footer>
+
 </body>
 </html>
