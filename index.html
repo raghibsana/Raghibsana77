@@ -1,20 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>home</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tap Counter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+
+    .login-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .tap-container {
+      text-align: center;
+      display: none;
+      position: relative;
+    }
+
+    .circle {
+      width: 200px;
+      height: 200px;
+      background: url('1.png') no-repeat center center;
+      background-size: cover;
+      border-radius: 50%;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+
+    .tap-count {
+      font-size: 24px;
+      margin: 10px 0;
+    }
+
+    .tap-upper {
+      font-size: 20px;
+    }
+
+    .tap-lower {
+      font-size: 20px;
+    }
+
+    input[type="text"], input[type="button"] {
+      padding: 10px;
+      margin: 5px;
+    }
+
+    .verification-input {
+      display: none;
+    }
+  </style>
 </head>
 <body>
-    <h1 style="color: blueviolet; text-align: center;" 
-    "><i>RYOMEN SUKUNA</i></h1>
-    <br/>
-    <img href="Screenshot_20241129-212421.png"/>
-    <br/>
-    <p>Hello everyone i'm a programmer of a front-end 
-        as you can see if you want to bought a gen 
-        website and some intrests so follow me on 
-    instagram<a href="https:/instagram.com/raghibsana/">Here.</a></p>
 
-    
+<!-- Login Section -->
+<div class="login-container">
+  <h2>Enter Mobile Number</h2>
+  <input type="text" id="mobileNumber" placeholder="Enter your mobile number" />
+  <input type="button" value="Send Verification Code" id="sendVerificationCode" />
+  
+  <div class="verification-input">
+    <h3>Enter Verification Code</h3>
+    <input type="text" id="verificationCode" placeholder="Verification Code" />
+    <input type="button" value="Verify" id="verifyCode" />
+  </div>
+</div>
+
+<!-- Tap Counter Section -->
+<div class="tap-container">
+  <div class="tap-upper">Upper Taps: <span id="upperTaps">0</span></div>
+  <div class="circle" id="tapCircle"></div>
+  <div class="tap-lower">Lower Taps: <span id="lowerTaps">100</span></div>
+</div>
+
+<script>
+  let mobileVerified = false;
+  let upperTaps = 0;
+  let lowerTaps = 100;
+  
+  const loginContainer = document.querySelector('.login-container');
+  const verificationInput = document.querySelector('.verification-input');
+  const tapContainer = document.querySelector('.tap-container');
+  
+  const upperTapsElement = document.getElementById('upperTaps');
+  const lowerTapsElement = document.getElementById('lowerTaps');
+  const tapCircle = document.getElementById('tapCircle');
+  const mobileNumberInput = document.getElementById('mobileNumber');
+  const verificationCodeInput = document.getElementById('verificationCode');
+  const sendVerificationCodeButton = document.getElementById('sendVerificationCode');
+  const verifyCodeButton = document.getElementById('verifyCode');
+  
+  sendVerificationCodeButton.addEventListener('click', () => {
+    // Simulate sending verification code
+    alert('Verification code sent!');
+    verificationInput.style.display = 'block';
+  });
+
+  verifyCodeButton.addEventListener('click', () => {
+    if (verificationCodeInput.value === '123456') {  // Simulating verification code
+      mobileVerified = true;
+      loginContainer.style.display = 'none';
+      tapContainer.style.display = 'block';
+    } else {
+      alert('Invalid verification code');
+    }
+  });
+
+  tapCircle.addEventListener('click', () => {
+    if (mobileVerified) {
+      // Increment upper tap count
+      upperTaps++;
+      upperTapsElement.textContent = upperTaps;
+
+      // Decrement lower tap count with the condition that it does not go below 0
+      if (lowerTaps > 0) {
+        lowerTaps--;
+        lowerTapsElement.textContent = lowerTaps;
+      }
+
+      // Auto increase upper tap count every second
+      setTimeout(() => {
+        upperTaps++;
+        upperTapsElement.textContent = upperTaps;
+      }, 1000);
+    }
+  });
+</script>
+
 </body>
 </html>
