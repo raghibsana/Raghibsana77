@@ -1,70 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phone Number Verification</title>
-</head>
-<body>
+<html>
+  <head>
+    <title>Privacy and Policy</title>
+  </head>
+  <body>
+<p>Sure, here is the privacy policy text formatted for easy copying:
 
-<!-- Login Section -->
-<div>
-  <h2>Enter Mobile Number</h2>
-  <input type="text" id="mobileNumber" placeholder="Enter your mobile number" />
-  <button id="sendVerificationCode">Send Verification Code</button>
+---
 
-  <div id="verificationSection" style="display:none;">
-    <h3>Enter Verification Code</h3>
-    <input type="text" id="verificationCode" placeholder="Verification Code" />
-    <button id="verifyCode">Verify Code</button>
-  </div>
-</div>
+**Privacy Policy**
 
-<script>
-  const sendVerificationCodeButton = document.getElementById('sendVerificationCode');
-  const verifyCodeButton = document.getElementById('verifyCode');
-  const mobileNumberInput = document.getElementById('mobileNumber');
-  const verificationCodeInput = document.getElementById('verificationCode');
-  const verificationSection = document.getElementById('verificationSection');
+**Effective Date: March 15, 2025**
 
-  sendVerificationCodeButton.addEventListener('click', () => {
-    const phoneNumber = mobileNumberInput.value;
-    fetch('/send-code', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phoneNumber })
-    })
-    .then(response => response.json())
-    .then(data => {
-      alert(data.message);
-      verificationSection.style.display = 'block';  // Show the verification input section
-    })
-    .catch(error => {
-      alert('Error sending verification code');
-    });
-  });
+**1. Introduction**
 
-  verifyCodeButton.addEventListener('click', () => {
-    const phoneNumber = mobileNumberInput.value;
-    const verificationCode = verificationCodeInput.value;
-    fetch('/verify-code', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phoneNumber, code: verificationCode })
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.message === 'Phone number verified successfully') {
-        alert('Verification successful!');
-      } else {
-        alert('Invalid code');
-      }
-    })
-    .catch(error => {
-      alert('Error verifying code');
-    });
-  });
-</script>
+Welcome to [serverbgmihack]! This Privacy Policy explains how we collect, use, disclose, and protect the information you provide to us when you interact with our Telegram bot. By using our bot, you agree to the terms of this Privacy Policy.
 
-</body>
+**2. Information We Collect**
+
+We may collect the following types of information:
+
+- **User Data**: Information you provide directly, such as your Telegram username, user ID, and any messages or commands you send to the bot.
+- **Usage Data**: Information about how you interact with the bot, including the commands you use, the frequency of your interactions, and any errors or issues you encounter.
+
+**3. How We Use Your Information**
+
+We use the information we collect for the following purposes:
+
+- To provide and maintain the bot's functionality.
+- To improve the bot's performance and user experience.
+- To respond to your inquiries and provide customer support.
+- To ensure the security and integrity of the bot and its users.
+
+**4. How We Share Your Information**
+
+We do not sell, rent, or share your personal information with third parties. However, we may share your information in the following circumstances:
+
+- **Legal Requirements**: If required by law or in response to a valid legal request, such as a subpoena or court order.
+- **Security**: To protect the rights, property, or safety of our users, the bot, or the public.
+- **Service Providers**: With third-party service providers who assist us in operating the bot, such as hosting providers and analytics services.
+
+**5. Data Security**
+
+We take reasonable measures to protect your information from unauthorized access, disclosure, alteration, and destruction. However, no method of transmission over the internet or method of electronic storage is 100% secure, and we cannot guarantee absolute security.
+
+**6. Your Choices**
+
+You have the right to:
+
+- Access and update your information.
+- Request deletion of your information.
+- Opt-out of receiving communications from us.
+
+To exercise these rights, please contact us at [your contact email or support channel].
+
+**7. Changes to This Privacy Policy**
+
+We may update this Privacy Policy from time to time. The updated version will be effective immediately upon posting. Your continued use of the bot after any changes to this Privacy Policy constitutes your acceptance of the updated terms.
+
+**8. Contact Us**
+
+If you have any questions or concerns about this Privacy Policy, please contact us at [your contact email or support channel].
+
+---
+
+You can copy this text and paste it into your desired document or platform.
+</p>
+  </body>
 </html>
